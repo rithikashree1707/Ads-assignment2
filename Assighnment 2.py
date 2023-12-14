@@ -18,18 +18,18 @@ import scipy.stats as stats
 from functools import reduce
 
 
+""" Reads data from a CSV file, filters it based on the Indicator Name and 
+      a list of countries, performs data manipulation, and returns 
+      two DataFrames.
+      Parameters:
+          Indicator_Name (str): The name of the indicator for filtering the 
+          data.
+       Returns:
+          d1_d: Filtered and processed DataFrame excluding unwanted columns.
+         d1_f: Transposed, cleaned, and formatted DataFrame for further 
+         analysis."""
 
 def read_data(Indicator_Name):
-    """ Reads data from a CSV file, filters it based on the Indicator Name and 
-        a list of countries, performs data manipulation, and returns 
-        two DataFrames.
-        Parameters:
-            Indicator_Name (str): The name of the indicator for filtering the 
-            data.
-         Returns:
-            d1_d: Filtered and processed DataFrame excluding unwanted columns.
-           d1_f: Transposed, cleaned, and formatted DataFrame for further 
-           analysis."""
     # Read data from CSV file into a DataFrame
     df = pd.read_csv("API_19_DS2_en_csv_v2_6183479.csv", skiprows=3)
     # List countries to filter data
@@ -65,27 +65,29 @@ def read_data(Indicator_Name):
     return d1_d,d1_f
 
 
+""" Slice the input DataFrame to retain only 'Country Name' and '2017' 
+     columns.
+     Parameters:
+     df1 : Input DataFrame containing data for multiple years.
+     Returns:
+     pandas.DataFrame: DataFrame with only 'Country Name' and '2017' 
+     columns."""
+
 def slice_data(df1):
-    """ Slice the input DataFrame to retain only 'Country Name' and '2017' 
-        columns.
-        Parameters:
-        df1 : Input DataFrame containing data for multiple years.
-        Returns:
-        pandas.DataFrame: DataFrame with only 'Country Name' and '2017' 
-        columns."""
     # Select specific columns 'Country Name' and '2017' from df1
     df1 = df1[['Country Name', '2017']]
     # Return df1
     return df1
 
 
+""" Merge multiple DataFrames based on 'Country Name' using an outer join.
+    Parameters:
+    *dataframes: Variable number of DataFrames to merge.
+    returns:
+    DataFrame: Merged DataFrame containing data from all input 
+    DataFrames."""
+
 def m_data(*dataframes):
-    """ Merge multiple DataFrames based on 'Country Name' using an outer join.
-        Parameters:
-        *dataframes: Variable number of DataFrames to merge.
-        returns:
-        DataFrame: Merged DataFrame containing data from all input 
-        DataFrames."""
     # Make use of functools.reduce to merge iteratively DataFrames
     # 'Left' and 'right' DataFrames are inputs to the lambda function
     # Using the 'Country Name' as column, pd.merge() executes an outer join.
@@ -96,12 +98,13 @@ def m_data(*dataframes):
     # Return merged_data
     return m_data
 
+
+""" Generate a heatmap to visualize the correlation matrix of numerical 
+     columns in the given DataFrame. It selects numerical columns, 
+     calculates the correlation matrix, and plots the heatmap using 
+     seaborn library."""
    
 def heatmap(df):
-    """ Generate a heatmap to visualize the correlation matrix of numerical 
-        columns in the given DataFrame. It selects numerical columns, 
-        calculates the correlation matrix, and plots the heatmap using 
-        seaborn library."""
     # Plot the figure
     plt.figure()
     # Select columns with numeric data types from 'df'
@@ -123,14 +126,12 @@ def heatmap(df):
     # Show the plot
     plt.show()
     
-
+"""Generate a line plot for specific countries' population over the years.
+     Parameters:
+     df: DataFrame containing population data for various countries over 
+     time."""
   
 def lineplot(df):
-        
-    """Generate a line plot for specific countries' population over the years.
-       Parameters:
-       df: DataFrame containing population data for various countries over 
-       time."""
     # Plot the figure
     plt.figure()
     # Plot the line graph with 'years' as x-axis and countries as y-axis
@@ -145,14 +146,14 @@ def lineplot(df):
     plt.title('Renewable energy consumption')
     # Show the plot
     plt.show()
+    
      
-
+"""Generate a bar plot for specific countries' population over the years.
+   Parameters:
+   df: DataFrame containing population data for various countries over 
+   time."""
      
 def barplot(df):
-    """Generate a bar plot for specific countries' population over the years.
-       Parameters:
-       df: DataFrame containing population data for various countries over 
-       time."""
     # Plot the figure
     plt.figure()
     # Plot the line graph with 'years' as x-axis and countries as y-axis
@@ -168,13 +169,13 @@ def barplot(df):
     # Show the plot
     plt.show()
     
-
+    
+"""Generate a box plot for specific countries' population over the years.
+   Parameters:
+   df: DataFrame containing population data for various countries over 
+   time."""
     
 def boxplot(df, countries):
-    """Generate a box plot for specific countries' population over the years.
-       Parameters:
-       df: DataFrame containing population data for various countries over 
-       time."""
     # Plot the figure
     plt.figure() 
     # Plot a boxplot for the data of specific countries from df
@@ -195,13 +196,12 @@ def boxplot(df, countries):
     # Show the plot
     plt.show()
     
-
+    
+""" Plot a histogram and calculate skewness and kurtosis of a DataFrame.
+Parameters:
+df : Input DataFrame containing numeric data."""
 
 def skewkurtplot(df):
-    """ Plot a histogram and calculate skewness and kurtosis of a DataFrame.
-    Parameters:
-    df : Input DataFrame containing numeric data."""
-    
     # Convert DataFrame to numeric values, coercing errors to NaN
     df_numeric = pd.to_numeric(df, errors='coerce')
     # Remove rows with missing values from the DataFrame 'df_numeric'
@@ -240,6 +240,7 @@ Cy , Cy_t  = read_data('Cereal yield (kg per hectare)')
 # Mr , Mr_t are two variables used to store the loaded data
 Mr , Mr_t = read_data('Mortality rate, under-5 (per 1,000 live births)')
 
+
 # Renaming the '2017' column to 'Renewable energy consumption' in sliced data
 Re_c = slice_data(Re).rename(columns={'2017': 'Renewable energy consumption'})
 # Renaming the '2017' column to 'Population growth' in sliced data
@@ -248,6 +249,7 @@ Pg_c = slice_data(Pg).rename(columns={'2017': 'Population growth '})
 Cy_c = slice_data(Cy).rename(columns={'2017': 'Cereal yield'})
 # Renaming the '2017' column to 'Mortality rate, under-5' in sliced data
 Mr_c = slice_data(Mr).rename(columns={'2017': 'Mortality rate, under-5'})
+
 
 # Merging four DF: Re_c, Pg_c, Cy_c, and Mr_c using the merge_data function
 df2 = m_data(Re_c, Pg_c, Cy_c , Mr_c)
